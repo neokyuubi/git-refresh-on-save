@@ -2,7 +2,8 @@
   "name": "git-refresh-on-save",
   "displayName": "git-refresh-on-save",
   "description": "Automatically refresh Git status on file save (useful for remote/SSH sessions).",
-  "version": "0.0.2",
+  "version": "0.0.3",
+  "license": "MIT",
   "publisher": "neokyuubi",
   "icon": "images/icon.png",
   "repository": {
