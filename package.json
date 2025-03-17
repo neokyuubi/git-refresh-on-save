@@ -3,6 +3,8 @@
   "displayName": "git-refresh-on-save",
   "description": "Automatically refresh Git status on file save (useful for remote/SSH sessions).",
   "version": "0.0.2",
+  "publisher": "neokyuubi",
+  "icon": "images/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/neokyuubi/git-refresh-on-save.git"
