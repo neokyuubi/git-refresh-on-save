@@ -5,6 +5,12 @@ import * as vscode from 'vscode';
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+	console.log('Extension activation started');
+	
+	if (!vscode.workspace.workspaceFolders) {
+		console.log('No workspace folder open');
+		return;
+	}
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
@@ -14,12 +20,19 @@ export function activate(context: vscode.ExtensionContext) {
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 	const disposable = vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
-        // Execute the Git refresh command.
-        // This command forces VS Code to re-run "git status" and update the Source Control panel.
+		if (!vscode.workspace.workspaceFolders?.some(folder => 
+			document.uri.fsPath.startsWith(folder.uri.fsPath)
+		)) {
+			console.log('File not in workspace, skipping');
+			return;
+		}
+		
+		// Execute the Git refresh command.
+		// This command forces VS Code to re-run "git status" and update the Source Control panel.
 		console.log('File saved, refreshing Git status...');
 		console.log('Document: ' + document.fileName);
-        vscode.commands.executeCommand('git.refresh');
-    });
+		vscode.commands.executeCommand('git.refresh');
+	});
 
 	context.subscriptions.push(disposable);
 }
