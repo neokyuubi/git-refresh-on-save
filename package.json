@@ -8,7 +8,7 @@
     "url": "https://github.com/neokyuubi/git-refresh-on-save.git"
   },
   "engines": {
-    "vscode": "^1.98.0"
+    "vscode": "^1.75.0"
   },
   "categories": [
     "Other"

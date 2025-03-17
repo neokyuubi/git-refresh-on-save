@@ -21,7 +21,7 @@ The extension works automatically after installation. Whenever you save a file, 
 
 ## Requirements
 
-- VS Code version 1.98.0 or higher
+- VS Code version 1.75.0 or higher
 - Git repository initialized in your workspace
 
 ## Extension Settings
