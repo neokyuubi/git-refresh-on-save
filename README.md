@@ -34,6 +34,6 @@ No known issues at this time.
 
 ## Release Notes
 
-### 0.0.1
+### 0.0.3
 
 Initial release of Git Refresh on Save
