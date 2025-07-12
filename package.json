@@ -1,14 +1,18 @@
 {
   "name": "git-refresh-on-save",
-  "displayName": "git-refresh-on-save",
-  "description": "Automatically refresh Git status on file save (useful for remote/SSH sessions).",
-  "version": "0.0.3",
-  "license": "MIT",
+  "displayName": "Git Refresh on Save",
+  "description": "Automatically refreshes Git status whenever a file is saved. Perfect for remote/SSH workflows.",
+  "version": "0.0.4",
   "publisher": "neokyuubi",
+  "license": "MIT",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/neokyuubi/git-refresh-on-save.git"
+  },
+  "homepage": "https://github.com/neokyuubi/git-refresh-on-save",
+  "bugs": {
+    "url": "https://github.com/neokyuubi/git-refresh-on-save/issues"
   },
   "engines": {
     "vscode": "^1.75.0"

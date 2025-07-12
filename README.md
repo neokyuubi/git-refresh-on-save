@@ -5,8 +5,10 @@ Automatically refreshes Git status whenever a file is saved. This is particularl
 ## Features
 
 - Automatically runs `git.refresh` command on file save
+- **Smart Git repository detection** - only runs in actual Git repositories
 - Updates the Source Control panel status immediately after saving
 - Works seamlessly with both local and remote repositories
+- **Graceful handling** of non-Git directories - no errors or unnecessary operations
 
 ## Installation
 
@@ -17,12 +19,17 @@ Automatically refreshes Git status whenever a file is saved. This is particularl
 
 ## Usage
 
-The extension works automatically after installation. Whenever you save a file, it will automatically refresh the Git status.
+The extension works automatically after installation. When you save a file:
+
+- **In a Git repository**: Automatically refreshes the Git status
+- **Outside a Git repository**: Does nothing (no errors or unnecessary operations)
+
+The extension intelligently detects whether you're working in a Git repository before attempting to refresh Git status, ensuring optimal performance and user experience.
 
 ## Requirements
 
 - VS Code version 1.75.0 or higher
-- Git repository initialized in your workspace
+- Git installed on your system (for Git repositories)
 
 ## Extension Settings
 
@@ -33,6 +40,13 @@ This extension currently doesn't provide any configurable settings.
 No known issues at this time.
 
 ## Release Notes
+
+### 0.0.4
+
+- Added intelligent Git repository detection
+- Improved performance by avoiding unnecessary Git operations in non-Git directories
+- Enhanced error handling and logging
+- Better user experience with no error dialogs for non-Git folders
 
 ### 0.0.3
 
