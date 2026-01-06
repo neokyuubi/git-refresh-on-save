@@ -108,12 +108,49 @@ export function activate(context: vscode.ExtensionContext) {
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 	const disposable = vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
-		if (!vscode.workspace.workspaceFolders?.some(folder => 
+		// Check if extension is enabled
+		const config = vscode.workspace.getConfiguration('gitRefreshOnSave');
+		const enabled = config.get<boolean>('enabled', true);
+		if (!enabled) {
+			return;
+		}
+
+		// Check ignored file patterns (simple string matching)
+		const ignoredPatterns = config.get<string[]>('ignoredFilePatterns', []);
+		const filePath = document.uri.fsPath;
+		const shouldIgnore = ignoredPatterns.some(pattern => {
+			// Simple pattern matching for common cases
+			if (pattern.includes('**')) {
+				// For glob patterns, check if path contains the pattern
+				const simplePattern = pattern.replace('**/', '').replace('/**', '').replace('**', '');
+				return filePath.includes(simplePattern);
+			}
+			return filePath.includes(pattern);
+		});
+
+		if (shouldIgnore) {
+			console.log('File matches ignored pattern, skipping:', document.fileName);
+			return;
+		}
+
+		// Skip temporary files, backups, and common non-source files
+		const fileName = path.basename(document.fileName).toLowerCase();
+		if (fileName.startsWith('.') ||
+		    fileName.includes('~') ||
+		    fileName.endsWith('.tmp') ||
+		    fileName.endsWith('.bak') ||
+		    fileName.endsWith('.swp') ||
+		    fileName.endsWith('.lock')) {
+			console.log('Skipping temporary/backup file:', document.fileName);
+			return;
+		}
+
+		if (!vscode.workspace.workspaceFolders?.some(folder =>
 			document.uri.fsPath.startsWith(folder.uri.fsPath)
 		)) {
 			return;
 		}
-		
+
 		// Check if we're in a Git repository before attempting to refresh
 		const gitRoot = findGitRepositoryRoot(document.uri.fsPath);
 		if (!gitRoot) {

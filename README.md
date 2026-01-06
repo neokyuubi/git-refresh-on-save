@@ -35,7 +35,12 @@ The extension intelligently detects whether you're working in a Git repository b
 
 ## Extension Settings
 
-This extension currently doesn't provide any configurable settings.
+This extension provides the following settings:
+
+- `gitRefreshOnSave.enabled`: Enable/disable automatic Git refresh on file save (default: `true`)
+- `gitRefreshOnSave.ignoredFilePatterns`: Array of file patterns to ignore (default includes common patterns like `node_modules`, log files, temporary files, etc.)
+
+You can configure these settings in VS Code/Cursor settings under "Extensions > Git Refresh on Save".
 
 ## Known Issues
 
@@ -43,12 +48,14 @@ No known issues at this time.
 
 ## Release Notes
 
-### 0.0.5
+### 0.0.6
 
 - **Multi-project support**: Extension now works with workspaces containing multiple Git repositories in subfolders
 - **Symlink support**: Handles symlinked folders and cross-filesystem scenarios (WSL ↔ Windows)
 - **Improved path resolution**: Better Git repository detection with symlink-aware directory traversal
 - **Enhanced logging**: More detailed output for debugging repository detection
+- **Configuration options**: Added settings to enable/disable extension and configure ignored file patterns
+- **Better filtering**: Automatically skips temporary files, backups, and configurable ignored patterns
 
 ### 0.0.4
 

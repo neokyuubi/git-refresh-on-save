@@ -2,7 +2,7 @@
   "name": "git-refresh-on-save",
   "displayName": "Git Refresh on Save",
   "description": "Automatically refreshes Git status whenever a file is saved. Perfect for remote/SSH workflows, multi-project workspaces, and symlinked folders.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "publisher": "neokyuubi",
   "license": "MIT",
   "icon": "images/icon.png",
@@ -41,7 +41,33 @@
         "command": "git-refresh-on-save.helloWorld",
         "title": "Hello World"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Git Refresh on Save",
+      "properties": {
+        "gitRefreshOnSave.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable automatic Git refresh on file save"
+        },
+        "gitRefreshOnSave.ignoredFilePatterns": {
+          "type": "array",
+          "default": [
+            "**/.git/**",
+            "**/node_modules/**",
+            "**/*.log",
+            "**/*.tmp",
+            "**/*.bak",
+            "**/*.swp",
+            "**/*.lock"
+          ],
+          "description": "File patterns to ignore when checking for Git refresh",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
