@@ -112,6 +112,34 @@ export function activate(context: vscode.ExtensionContext) {
 		const config = vscode.workspace.getConfiguration('gitRefreshOnSave');
 		const enabled = config.get<boolean>('enabled', true);
 		if (!enabled) {
+			console.log('Extension disabled, skipping Git refresh for:', document.fileName);
+			return;
+		}
+
+		// Skip if not a regular file (might be settings, config, etc.)
+		if (document.uri.scheme !== 'file') {
+			console.log('Skipping non-file URI:', document.uri.scheme, document.fileName);
+			return;
+		}
+
+		// Skip temporary files, backups, and common non-source files
+		const fileName = path.basename(document.fileName).toLowerCase();
+		if (fileName.startsWith('.') ||
+		    fileName.includes('~') ||
+		    fileName.endsWith('.tmp') ||
+		    fileName.endsWith('.bak') ||
+		    fileName.endsWith('.swp') ||
+		    fileName.endsWith('.lock') ||
+		    fileName.endsWith('.log')) {
+			console.log('Skipping temporary/backup/log file:', document.fileName);
+			return;
+		}
+
+		// Check if file is in workspace
+		if (!vscode.workspace.workspaceFolders?.some(folder =>
+			document.uri.fsPath.startsWith(folder.uri.fsPath)
+		)) {
+			console.log('File outside workspace, skipping:', document.fileName);
 			return;
 		}
 
@@ -133,48 +161,52 @@ export function activate(context: vscode.ExtensionContext) {
 			return;
 		}
 
-		// Skip temporary files, backups, and common non-source files
-		const fileName = path.basename(document.fileName).toLowerCase();
-		if (fileName.startsWith('.') ||
-		    fileName.includes('~') ||
-		    fileName.endsWith('.tmp') ||
-		    fileName.endsWith('.bak') ||
-		    fileName.endsWith('.swp') ||
-		    fileName.endsWith('.lock')) {
-			console.log('Skipping temporary/backup file:', document.fileName);
-			return;
-		}
-
-		if (!vscode.workspace.workspaceFolders?.some(folder =>
-			document.uri.fsPath.startsWith(folder.uri.fsPath)
-		)) {
-			return;
-		}
-
-		// Check if we're in a Git repository before attempting to refresh
+		// CRITICAL: Check if we're in a Git repository before attempting to refresh
 		const gitRoot = findGitRepositoryRoot(document.uri.fsPath);
 		if (!gitRoot) {
-			console.log('File saved outside Git repository, skipping Git refresh:', document.fileName);
+			console.log('❌ File saved outside Git repository, skipping Git refresh:', document.fileName);
 			return;
 		}
-		console.log('Found Git repository at:', gitRoot, 'for file:', document.fileName);
-		
-		// Note: We skip the VS Code Git API check for better symlink support
-		// The filesystem-based check should be sufficient
-		
-		// Execute the Git refresh command with a small delay to avoid conflicts
-		console.log('File saved in Git repository, refreshing Git status...');
-		console.log('Document: ' + document.fileName);
 
-		// Add a small delay to avoid conflicts with auto-save
-		setTimeout(() => {
-			vscode.commands.executeCommand('git.refresh')
-				.then(() => {
-					console.log('Git status refreshed successfully');
-				}, (err: Error) => {
-					console.error('Error refreshing Git status:', err);
-				});
-		}, 100); // 100ms delay
+		// Double-check that the .git directory actually exists and is accessible
+		if (!isGitRepository(gitRoot)) {
+			console.log('❌ Git repository not accessible, skipping Git refresh:', document.fileName);
+			return;
+		}
+
+		console.log('✅ Found valid Git repository at:', gitRoot, 'for file:', document.fileName);
+		
+		// Final safety check: ensure VS Code's Git extension can see this repository
+		try {
+			const gitExtension = vscode.extensions.getExtension('vscode.git');
+			if (!gitExtension?.isActive) {
+				console.log('❌ VS Code Git extension not active, skipping refresh');
+				return;
+			}
+
+			const git = gitExtension.exports.getAPI(1);
+			const hasMatchingRepo = git.repositories.some((repo: any) => {
+				return repo.rootUri.fsPath === gitRoot;
+			});
+
+			if (!hasMatchingRepo) {
+				console.log('❌ Git repository not recognized by VS Code Git extension, skipping refresh');
+				return;
+			}
+		} catch (error) {
+			console.log('⚠️ Could not verify with Git extension, proceeding anyway');
+		}
+
+		// Execute the Git refresh command only for this specific repository
+		console.log('🔄 Refreshing Git status for repository:', gitRoot);
+		console.log('📄 File:', document.fileName);
+
+		vscode.commands.executeCommand('git.refresh')
+			.then(() => {
+				console.log('✅ Git status refreshed successfully for:', gitRoot);
+			}, (err: Error) => {
+				console.error('❌ Error refreshing Git status:', err);
+			});
 	});
 
 	context.subscriptions.push(disposable);
