@@ -1,8 +1,8 @@
 {
   "name": "git-refresh-on-save",
   "displayName": "Git Refresh on Save",
-  "description": "Automatically refreshes Git status whenever a file is saved. Perfect for remote/SSH workflows.",
-  "version": "0.0.4",
+  "description": "Automatically refreshes Git status whenever a file is saved. Perfect for remote/SSH workflows, multi-project workspaces, and symlinked folders.",
+  "version": "0.0.5",
   "publisher": "neokyuubi",
   "license": "MIT",
   "icon": "images/icon.png",

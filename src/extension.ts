@@ -20,6 +20,50 @@ function isGitRepository(folderPath: string): boolean {
 }
 
 /**
+ * Finds the Git repository root for a given file path by walking up the directory tree
+ * Handles symlinks and cross-filesystem scenarios (WSL <-> Windows)
+ * @param filePath - The file path to start searching from
+ * @returns the Git repository root path, or null if not found
+ */
+function findGitRepositoryRoot(filePath: string): string | null {
+	try {
+		let currentDir = path.dirname(filePath);
+		let visitedPaths = new Set<string>();
+
+		// Walk up the directory tree looking for .git
+		while (currentDir !== path.dirname(currentDir) && !visitedPaths.has(currentDir)) { // Stop at root directory or cycles
+			visitedPaths.add(currentDir);
+
+			// Check if current directory is a git repository
+			if (isGitRepository(currentDir)) {
+				return currentDir;
+			}
+
+			// Also check if this is a symlink and the target is a git repository
+			try {
+				const stat = fs.lstatSync(currentDir);
+				if (stat.isSymbolicLink()) {
+					const realPath = fs.realpathSync(currentDir);
+					if (isGitRepository(realPath)) {
+						return realPath;
+					}
+				}
+			} catch (error) {
+				// Ignore symlink resolution errors
+				console.log('Could not resolve symlink for:', currentDir);
+			}
+
+			currentDir = path.dirname(currentDir);
+		}
+
+		return null;
+	} catch (error) {
+		console.error('Error finding Git repository root:', error);
+		return null;
+	}
+}
+
+/**
  * Checks if VS Code's Git extension has detected any repositories
  * @returns true if Git repositories are available, false otherwise
  */
@@ -39,17 +83,13 @@ function hasGitRepositories(): boolean {
 }
 
 /**
- * Checks if the saved file is within a workspace folder that contains a Git repository
+ * Checks if the saved file is within any Git repository (supports multi-project workspaces)
  * @param document - The document that was saved
  * @returns true if the file is in a Git repository, false otherwise
  */
 function isFileInGitRepository(document: vscode.TextDocument): boolean {
-	const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
-	if (!workspaceFolder) {
-		return false;
-	}
-	
-	return isGitRepository(workspaceFolder.uri.fsPath);
+	const filePath = document.uri.fsPath;
+	return findGitRepositoryRoot(filePath) !== null;
 }
 
 // This method is called when your extension is activated
@@ -75,16 +115,15 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		
 		// Check if we're in a Git repository before attempting to refresh
-		if (!isFileInGitRepository(document)) {
+		const gitRoot = findGitRepositoryRoot(document.uri.fsPath);
+		if (!gitRoot) {
 			console.log('File saved outside Git repository, skipping Git refresh:', document.fileName);
 			return;
 		}
+		console.log('Found Git repository at:', gitRoot, 'for file:', document.fileName);
 		
-		// Double-check with VS Code's Git API
-		if (!hasGitRepositories()) {
-			console.log('No Git repositories detected by VS Code, skipping Git refresh');
-			return;
-		}
+		// Note: We skip the VS Code Git API check for better symlink support
+		// The filesystem-based check should be sufficient
 		
 		// Execute the Git refresh command.
 		// This command forces VS Code to re-run "git status" and update the Source Control panel.

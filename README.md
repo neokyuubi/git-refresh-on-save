@@ -1,11 +1,13 @@
 # Git Refresh on Save
 
-Automatically refreshes Git status whenever a file is saved. This is particularly useful when working with remote/SSH sessions where Git status updates might be delayed.
+Automatically refreshes Git status whenever a file is saved. This is particularly useful when working with remote/SSH sessions where Git status updates might be delayed, and supports multi-project workspaces with multiple Git repositories.
 
 ## Features
 
 - Automatically runs `git.refresh` command on file save
 - **Smart Git repository detection** - only runs in actual Git repositories
+- **Multi-project support** - works with workspaces containing multiple Git repositories
+- **Symlink support** - handles symlinked folders and cross-filesystem scenarios (WSL ↔ Windows)
 - Updates the Source Control panel status immediately after saving
 - Works seamlessly with both local and remote repositories
 - **Graceful handling** of non-Git directories - no errors or unnecessary operations
@@ -40,6 +42,13 @@ This extension currently doesn't provide any configurable settings.
 No known issues at this time.
 
 ## Release Notes
+
+### 0.0.5
+
+- **Multi-project support**: Extension now works with workspaces containing multiple Git repositories in subfolders
+- **Symlink support**: Handles symlinked folders and cross-filesystem scenarios (WSL ↔ Windows)
+- **Improved path resolution**: Better Git repository detection with symlink-aware directory traversal
+- **Enhanced logging**: More detailed output for debugging repository detection
 
 ### 0.0.4
 
