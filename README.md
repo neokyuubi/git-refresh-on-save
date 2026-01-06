@@ -4,13 +4,13 @@ Automatically refreshes Git status whenever a file is saved. This is particularl
 
 ## Features
 
-- Automatically runs `git.refresh` command on file save
-- **Smart Git repository detection** - only runs in actual Git repositories
+- **Smart Git repository detection** - identifies when files are saved in Git repositories
 - **Multi-project support** - works with workspaces containing multiple Git repositories
 - **Symlink support** - handles symlinked folders and cross-filesystem scenarios (WSL ↔ Windows)
-- Updates the Source Control panel status immediately after saving
+- **Detailed logging** - shows exactly which files trigger Git repository detection
+- **No intrusive refreshes** - relies on VS Code's automatic Git status updates
 - Works seamlessly with both local and remote repositories
-- **Graceful handling** of non-Git directories - no errors or unnecessary operations
+- **Graceful filtering** - automatically ignores temporary files, logs, and non-Git files
 
 ## Installation
 
@@ -47,6 +47,11 @@ You can configure these settings in VS Code/Cursor settings under "Extensions > 
 No known issues at this time.
 
 ## Release Notes
+
+### 0.0.7
+
+- **Fixed intrusive behavior**: Removed git.refresh calls that caused repository picker dropdowns
+- **Non-intrusive operation**: Relies on VS Code's automatic Git status updates instead of forced refreshes
 
 ### 0.0.6
 

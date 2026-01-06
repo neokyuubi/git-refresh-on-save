@@ -4,7 +4,12 @@ All notable changes to the "git-refresh-on-save" extension will be documented in
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [0.0.6] - 2026-01-06
+## [0.0.7] - 2026-01-06
+
+### Fixed
+- **Removed intrusive git.refresh calls** that caused repository picker dropdowns
+- **Eliminated annoying popups** when saving files with auto-save enabled
+- **Non-intrusive operation** - now relies entirely on VS Code's automatic Git status updates
 
 ### Added
 - **Multi-project support**: Extension now works with workspaces containing multiple Git repositories in subfolders
@@ -13,6 +18,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - **Enhanced logging**: More detailed output for debugging repository detection
 - **Configuration options**: Added settings to enable/disable extension and configure ignored file patterns
 - **Better filtering**: Automatically skips temporary files, backups, and configurable ignored patterns
+- **Non-intrusive operation**: Removed forced git.refresh calls, now relies on VS Code's auto-refresh
 
 ### Changed
 - Modified Git repository detection to walk up directory tree instead of only checking workspace folder

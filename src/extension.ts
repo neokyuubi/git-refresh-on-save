@@ -197,13 +197,31 @@ export function activate(context: vscode.ExtensionContext) {
 			console.log('⚠️ Could not verify with Git extension, proceeding anyway');
 		}
 
-		// Execute the Git refresh command only for this specific repository
-		console.log('🔄 Refreshing Git status for repository:', gitRoot);
+		// Refresh the specific Git repository without showing repository picker
+		console.log('📁 File saved in Git repository:', gitRoot);
 		console.log('📄 File:', document.fileName);
 
+		try {
+			const gitExtension = vscode.extensions.getExtension('vscode.git');
+			if (gitExtension?.isActive) {
+				const git = gitExtension.exports.getAPI(1);
+				const repo = git.repositories.find((r: any) => r.rootUri.fsPath === gitRoot);
+				if (repo) {
+					// Refresh just this specific repository's status
+					repo.status();
+					console.log('✅ Git repository status refreshed for:', gitRoot);
+					return;
+				}
+			}
+		} catch (error) {
+			console.log('⚠️ Could not refresh specific repository:', error);
+		}
+
+		// Fallback: try to refresh without showing picker by being more specific
+		console.log('🔄 Using fallback refresh method');
 		vscode.commands.executeCommand('git.refresh')
 			.then(() => {
-				console.log('✅ Git status refreshed successfully for:', gitRoot);
+				console.log('✅ Git status refreshed (fallback)');
 			}, (err: Error) => {
 				console.error('❌ Error refreshing Git status:', err);
 			});
