@@ -162,16 +162,19 @@ export function activate(context: vscode.ExtensionContext) {
 		// Note: We skip the VS Code Git API check for better symlink support
 		// The filesystem-based check should be sufficient
 		
-		// Execute the Git refresh command.
-		// This command forces VS Code to re-run "git status" and update the Source Control panel.
+		// Execute the Git refresh command with a small delay to avoid conflicts
 		console.log('File saved in Git repository, refreshing Git status...');
 		console.log('Document: ' + document.fileName);
-		vscode.commands.executeCommand('git.refresh')
-			.then(() => {
-				console.log('Git status refreshed successfully');
-			}, (err: Error) => {
-				console.error('Error refreshing Git status:', err);
-			});
+
+		// Add a small delay to avoid conflicts with auto-save
+		setTimeout(() => {
+			vscode.commands.executeCommand('git.refresh')
+				.then(() => {
+					console.log('Git status refreshed successfully');
+				}, (err: Error) => {
+					console.error('Error refreshing Git status:', err);
+				});
+		}, 100); // 100ms delay
 	});
 
 	context.subscriptions.push(disposable);
