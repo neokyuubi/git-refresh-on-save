@@ -4,7 +4,12 @@ All notable changes to the "git-refresh-on-save" extension will be documented in
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [0.0.7] - 2026-01-06
+## [0.0.8] - 2026-01-06
+
+### Fixed
+- **Restored Git status refresh functionality** while eliminating repository picker dropdowns
+- **Targeted repository refresh** using Git extension API instead of global refresh command
+- **Smart refresh logic** - refreshes specific repository first, falls back to global refresh if needed
 
 ### Fixed
 - **Removed intrusive git.refresh calls** that caused repository picker dropdowns

@@ -48,6 +48,12 @@ No known issues at this time.
 
 ## Release Notes
 
+### 0.0.8
+
+- **Fixed Git refresh functionality**: Restored proper Git status updates while eliminating dropdowns
+- **Smart repository targeting**: Uses Git extension API for specific repository refresh
+- **Improved refresh logic**: Targets specific repositories instead of global refresh commands
+
 ### 0.0.7
 
 - **Fixed intrusive behavior**: Removed git.refresh calls that caused repository picker dropdowns
